@@ -11,13 +11,6 @@ public class Kript {
 	private void generateKeys() {
 		privateKey = new Key();
 		publicKey = new Key(privateKey);
-
-		String binary = privateKey.toBinaryString(privateKey.getKey(), false);
-		privateKey.print();
-		System.out.println(binary);
-
-		privateKey.stringFromBinary(binary, false);
-		
 	}
 
 	public static void main(String[] args) {
