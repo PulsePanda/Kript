@@ -45,9 +45,16 @@ public class Key {
 
 	public String stringFromBinary(String s, boolean stringHasSpaces) {
 		if (!stringHasSpaces) {
+			StringBuilder sb = new StringBuilder();
+			sb.append(s);
 			for (int i = 0; i < s.length(); i++) {
-
+				if (i % 9 == 0 && i != 0) {
+					sb.insert(i - 1, " ");
+				}
 			}
+
+			System.out.println(sb.toString());
+			System.exit(0);
 		}
 
 		String[] ss = s.split(" ");
@@ -61,5 +68,9 @@ public class Key {
 
 	public void print() {
 		System.out.println("KEY: " + key);
+	}
+
+	public String getKey() {
+		return key;
 	}
 }
