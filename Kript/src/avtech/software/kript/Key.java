@@ -1,7 +1,5 @@
 package avtech.software.kript;
 
-import java.util.ArrayList;
-
 public class Key {
 
 	private String key = "";
@@ -44,23 +42,31 @@ public class Key {
 	}
 
 	public String stringFromBinary(String s, boolean stringHasSpaces) {
+
+		String[] ss = null;
+
 		if (!stringHasSpaces) {
-			StringBuilder sb = new StringBuilder();
-			sb.append(s);
-			for (int i = 0; i < s.length(); i++) {
-				if (i % 9 == 0 && i != 0) {
-					sb.insert(i - 1, " ");
-				}
-			}
-
-			System.out.println(sb.toString());
-			System.exit(0);
+			ss = addSpacesToBinary(s).split(" ");
+		} else {
+			ss = s.split(" ");
 		}
-
-		String[] ss = s.split(" ");
 		StringBuilder sb = new StringBuilder();
 		for (int i = 0; i < ss.length; i++) {
 			sb.append((char) Integer.parseInt(ss[i], 2));
+		}
+
+		return sb.toString();
+	}
+
+	private String addSpacesToBinary(String s) {
+		StringBuilder sb = new StringBuilder();
+		sb.append(s);
+		int length = s.length();
+		for (int i = 0; i < length; i++) {
+			if (i % 9 == 0 && i != 0) {
+				sb.insert(i - 1, " ");
+				length = sb.length();
+			}
 		}
 
 		return sb.toString();
