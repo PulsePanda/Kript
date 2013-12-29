@@ -1,11 +1,9 @@
 package avtech.software.kript;
 
-import java.math.BigInteger;
-
 public class Kript {
 
-	private Key publicKey;
 	private static Key privateKey;
+	private Key publicKey;
 
 	public Kript() {
 		generateKeys();
