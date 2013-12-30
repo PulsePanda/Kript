@@ -1,13 +1,17 @@
 package avtech.software.kript;
 
 import java.math.BigInteger;
+import java.util.Random;
 
 public class Key {
 
-	private String intStringKey = "";
+	private static final long primeNumber = 32416190071L;
+	private String stringKey = "";
 	private String hexKey = "";
+	private long longKey;
+	private long multiplier;
 	private BigInteger bigIntKey;
-	private static final long primeNumber = 982451653;
+	private static Random random = new Random();
 
 	public Key() {
 		generate();
@@ -26,11 +30,8 @@ public class Key {
 	}
 
 	public void print() {
-		System.out.println("Int: " + bigIntKey.toString());
-		System.out.println("Key: " + hexKey);
-	}
-
-	public String getKey() {
-		return hexKey;
+		System.out.println("String: " + stringKey);
+		System.out.println("Hex: " + hexKey);
+		System.out.println("Long: " + longKey);
 	}
 }
