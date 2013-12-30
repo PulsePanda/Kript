@@ -11,8 +11,10 @@ public class Kript {
 
 	private void generateKeys() {
 		privateKey1 = new PrivateKey();
-//		privateKey2 = new PrivateKey();
-//		publicKey = new PublicKey(privateKey1, privateKey2);
+		privateKey2 = new PrivateKey();
+		publicKey = new PublicKey(privateKey1, privateKey2);
+
+		publicKey.print();
 	}
 
 	public String encrypt(String s) {
@@ -27,6 +29,7 @@ public class Kript {
 
 	public static void main(String[] args) {
 		new Kript();
+
 		/**
 		 * test 2
 		 */
