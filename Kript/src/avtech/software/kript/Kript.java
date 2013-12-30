@@ -2,19 +2,17 @@ package avtech.software.kript;
 
 public class Kript {
 
-	private Key privateKey;
-	private Key publicKey;
+	private PrivateKey privateKey1, privateKey2;
+	private PublicKey publicKey;
 
 	public Kript() {
 		generateKeys();
 	}
 
 	private void generateKeys() {
-		privateKey = new Key();
-		publicKey = new Key(privateKey);
-		privateKey.print();
-		System.out.println();
-		publicKey.print();
+		privateKey1 = new PrivateKey();
+//		privateKey2 = new PrivateKey();
+//		publicKey = new PublicKey(privateKey1, privateKey2);
 	}
 
 	public String encrypt(String s) {

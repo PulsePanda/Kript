@@ -5,33 +5,22 @@ import java.util.Random;
 
 public class Key {
 
-	private static final long primeNumber = 32416190071L;
-	private String stringKey = "";
-	private String hexKey = "";
-	private long longKey;
-	private long multiplier;
-	private BigInteger bigIntKey;
+	private long primeNumber;
+	private boolean prime = false;
 	private static Random random = new Random();
 
-	public Key() {
-		generate();
-	}
+	// 9223372036854775807
 
-	public Key(Key privateKey) {
-		generate(privateKey);
-	}
+	public void generatePrime() {
+		// long temp = random.nextLong();
+		long temp = 11;
 
-	private void generate() {
+		while (!prime) {
 
-	}
-
-	private void generate(Key pubKey) {
-
+		}
 	}
 
 	public void print() {
-		System.out.println("String: " + stringKey);
-		System.out.println("Hex: " + hexKey);
-		System.out.println("Long: " + longKey);
+		System.out.println("Prime: " + primeNumber);
 	}
 }
