@@ -4,8 +4,10 @@ public class Kript {
 
 	private PrivateKey privateKey1, privateKey2;
 	private PublicKey publicKey;
+	private String remotePublicKey;
 
-	public Kript() {
+	public Kript(String rpk) {
+		setRemotePublicKey(rpk);
 		generateKeys();
 	}
 
@@ -13,13 +15,24 @@ public class Kript {
 		privateKey1 = new PrivateKey();
 		privateKey2 = new PrivateKey();
 		publicKey = new PublicKey(privateKey1, privateKey2);
-
-		publicKey.print();
 	}
 
 	public String encrypt(String s) {
+		byte[] msgBytes = s.getBytes();
+		String msg = "";
+		long intMsg;
 
-		return null;
+		// convert message into an array of bytes
+		for (int i = 0; i < msgBytes.length; i++) {
+			msg = msg + msgBytes[i];
+		}
+
+		// convert all values to long, then multiply them and re-convert them
+		intMsg = Long.parseLong(msg);
+		intMsg *= Long.parseLong(remotePublicKey);
+		msg = Long.toString(intMsg);
+
+		return msg;
 	}
 
 	public String decrypt(String s) {
@@ -27,8 +40,12 @@ public class Kript {
 		return null;
 	}
 
+	public void setRemotePublicKey(String k) {
+		remotePublicKey = k;
+	}
+
 	public static void main(String[] args) {
-		new Kript();
+		new Kript("1").encrypt("hello");
 
 		/**
 		 * test 2
