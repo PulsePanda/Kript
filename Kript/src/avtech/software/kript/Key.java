@@ -16,6 +16,10 @@ public class Key {
 		return key;
 	}
 
+	public String getKeyString() {
+		return Long.toString(key);
+	}
+
 	public void print() {
 		System.out.println("key: " + key);
 	}

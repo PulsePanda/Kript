@@ -1,5 +1,13 @@
 package avtech.software.kript;
 
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+
+/**
+ * TO ENCODE, MUST SUBMIT A BYTE ARRAY OF THE MESSAGE
+ */
+
 public class Kript {
 
 	private PrivateKey privateKey1, privateKey2;
@@ -7,8 +15,8 @@ public class Kript {
 	private String remotePublicKey;
 
 	public Kript(String rpk) {
-		setRemotePublicKey(rpk);
 		generateKeys();
+		setRemotePublicKey(publicKey.getKeyString());
 	}
 
 	private void generateKeys() {
@@ -17,20 +25,14 @@ public class Kript {
 		publicKey = new PublicKey(privateKey1, privateKey2);
 	}
 
-	public String encrypt(String s) {
-		byte[] msgBytes = s.getBytes();
-		String msg = "";
-		long intMsg;
+	public long[] encrypt(byte[] bytes) {
+		long[] msg = new long[bytes.length];
+		long rpkLong = Long.parseLong(remotePublicKey);
 
-		// convert message into an array of bytes
-		for (int i = 0; i < msgBytes.length; i++) {
-			msg = msg + msgBytes[i];
+		// convert message into an array of bytes and encodes them
+		for (int i = 0; i < bytes.length; i++) {
+			msg[i] = (37 * bytes[i]) % rpkLong;
 		}
-
-		// convert all values to long, then multiply them and re-convert them
-		intMsg = Long.parseLong(msg);
-		intMsg *= Long.parseLong(remotePublicKey);
-		msg = Long.toString(intMsg);
 
 		return msg;
 	}
@@ -45,22 +47,24 @@ public class Kript {
 	}
 
 	public static void main(String[] args) {
-		new Kript("1").encrypt("hello");
+		new Kript("1");
+	}
 
-		/**
-		 * test 2
-		 */
-		// BigInteger multiply = new BigInteger(privateKey.toBinaryString(
-		// privateKey.getKey(), false), 2).multiply(new BigInteger(
-		// "01100011", 2));
-		// System.out.println(multiply.toString(2));
+	// method to copy a file into byte[] taken from the original server software
+	public static byte[] copyFile(String dir) {
+		File f = new File(dir);
+		byte[] mybytearray = null;
 
-		/**
-		 * multiplication example
-		 */
-		// System.out.println(new BigInteger(privateKey.toBinaryString(
-		// privateKey.getKey(), false), 2).multiply(
-		// new BigInteger("01100011")).toString(2));
+		try {
+			mybytearray = new byte[(int) f.length()];
+			FileInputStream fis;
+			fis = new FileInputStream(f);
+			BufferedInputStream bis = new BufferedInputStream(fis);
+			bis.read(mybytearray, 0, mybytearray.length);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 
+		return mybytearray;
 	}
 }
