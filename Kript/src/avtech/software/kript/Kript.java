@@ -10,19 +10,28 @@ import java.io.FileInputStream;
 
 public class Kript {
 
-	private PrivateKey privateKey1, privateKey2;
+	private Prime p = new Prime();
+	private Prime q = new Prime();
+
+	private long modulus;
+
+	private PrivateKey privateKey;
 	private PublicKey publicKey;
 	private String remotePublicKey;
 
 	public Kript(String rpk) {
-		generateKeys();
-		setRemotePublicKey(publicKey.getKeyString());
+		genModulus();
+		genKeys();
+		setRPK(rpk);
 	}
 
-	private void generateKeys() {
-		privateKey1 = new PrivateKey();
-		privateKey2 = new PrivateKey();
-		publicKey = new PublicKey(privateKey1, privateKey2);
+	private void genModulus() {
+		modulus = p.getPrime() * q.getPrime();
+	}
+
+	private void genKeys() {
+		privateKey = new PrivateKey();
+		publicKey = new PublicKey();
 	}
 
 	public long[] encrypt(byte[] bytes) {
@@ -42,7 +51,7 @@ public class Kript {
 		return null;
 	}
 
-	public void setRemotePublicKey(String k) {
+	public void setRPK(String k) {
 		remotePublicKey = k;
 	}
 
