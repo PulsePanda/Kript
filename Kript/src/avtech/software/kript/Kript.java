@@ -3,6 +3,7 @@ package avtech.software.kript;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.util.Random;
 
 /**
  * TO ENCODE, MUST SUBMIT A BYTE ARRAY OF THE MESSAGE
@@ -12,21 +13,32 @@ public class Kript {
 
 	private Prime p = new Prime();
 	private Prime q = new Prime();
-
 	private long modulus;
+	private long etfMod;
+	private long e;
 
 	private PrivateKey privateKey;
 	private PublicKey publicKey;
 	private String remotePublicKey;
 
+	private static Random random = new Random();
+
 	public Kript(String rpk) {
-		genModulus();
+		modulus = p.getPrime() * q.getPrime();
+		etfMod = (p.getPrime() - 1) * (q.getPrime() - 1);
+		genE();
 		genKeys();
 		setRPK(rpk);
 	}
 
-	private void genModulus() {
-		modulus = p.getPrime() * q.getPrime();
+	private void genE() {
+		long temp = etfMod / 2;
+
+		while (!Prime.isCoprime(temp, etfMod)) {
+			temp--;
+		}
+
+		e = temp;
 	}
 
 	private void genKeys() {
@@ -56,7 +68,8 @@ public class Kript {
 	}
 
 	public static void main(String[] args) {
-		new Kript("1");
+		// new Kript("1");
+		System.out.println(17 % 3120);
 	}
 
 	// method to copy a file into byte[] taken from the original server software
