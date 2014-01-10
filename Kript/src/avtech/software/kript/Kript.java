@@ -15,7 +15,7 @@ public class Kript {
 	private Prime q = new Prime();
 	private long modulus;
 	private long etfMod;
-	private long e;
+	private int e;
 
 	private PrivateKey privateKey;
 	private PublicKey publicKey;
@@ -32,10 +32,10 @@ public class Kript {
 	}
 
 	private void genE() {
-		long temp = etfMod / 2;
+		int temp = 7;
 
 		while (!Prime.isCoprime(temp, etfMod)) {
-			temp--;
+			temp++;
 		}
 
 		e = temp;
