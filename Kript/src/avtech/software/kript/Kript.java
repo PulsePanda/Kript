@@ -13,49 +13,57 @@ public class Kript {
 
 	private Prime p = new Prime();
 	private Prime q = new Prime();
-	private long modulus;
-	private long etfMod;
-	private int e;
+	private long n;
+	private long eN;
+	private int e; // released as the public key exponent
+	private int d = 1; // kept as the private key exponent
 
 	private PrivateKey privateKey;
 	private PublicKey publicKey;
-	private String remotePublicKey;
+	private PublicKey remotePublicKey;
 
 	private static Random random = new Random();
 
-	public Kript(String rpk) {
-		modulus = p.getPrime() * q.getPrime();
-		etfMod = (p.getPrime() - 1) * (q.getPrime() - 1);
+	public Kript() {
+		n = p.getPrime() * q.getPrime();
+		eN = (p.getPrime() - 1) * (q.getPrime() - 1);
 		genE();
+		genD();
 		genKeys();
-		setRPK(rpk);
 	}
 
 	private void genE() {
 		int temp = 7;
 
-		while (!Prime.isCoprime(temp, etfMod)) {
+		while (!Prime.isCoprime(temp, eN)) {
 			temp++;
 		}
 
 		e = temp;
 	}
 
+	private void genD() {
+		// solve for d given d*e = 1 (mod eN)
+		while ((d * e) % eN != 1) {
+			d++;
+		}
+	}
+
 	private void genKeys() {
-		privateKey = new PrivateKey();
-		publicKey = new PublicKey();
+		privateKey = new PrivateKey(n, d);
+		publicKey = new PublicKey(n, e);
 	}
 
 	public long[] encrypt(byte[] bytes) {
 		long[] msg = new long[bytes.length];
-		long rpkLong = Long.parseLong(remotePublicKey);
+		long n = remotePublicKey.getN();
+		long e = remotePublicKey.getE();
 
-		// convert message into an array of bytes and encodes them
-		for (int i = 0; i < bytes.length; i++) {
-			msg[i] = (37 * bytes[i]) % rpkLong;
+		for (int i = 0; i < msg.length; i++) {
+			msg[i] = (bytes[i]);
 		}
 
-		return msg;
+		return null;
 	}
 
 	public String decrypt(String s) {
@@ -63,13 +71,13 @@ public class Kript {
 		return null;
 	}
 
-	public void setRPK(String k) {
+	public void setRemotePublicKey(PublicKey k) {
 		remotePublicKey = k;
 	}
 
 	public static void main(String[] args) {
-		// new Kript("1");
-		System.out.println(17 % 3120);
+		// new Kript();
+		System.out.println((65 ^ 17) % 3233);
 	}
 
 	// method to copy a file into byte[] taken from the original server software
