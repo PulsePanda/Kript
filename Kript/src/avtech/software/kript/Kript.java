@@ -1,10 +1,6 @@
 package avtech.software.kript;
 
-import java.io.BufferedInputStream;
-import java.io.File;
-import java.io.FileInputStream;
 import java.math.BigInteger;
-import java.util.Random;
 
 /**
  * TO ENCODE, MUST SUBMIT A BYTE ARRAY OF THE MESSAGE
@@ -22,8 +18,6 @@ public class Kript {
 	private PrivateKey privateKey;
 	private PublicKey publicKey;
 	private PublicKey remotePublicKey;
-
-	private static Random random = new Random();
 
 	public Kript() {
 		n = p.getPrime() * q.getPrime();
