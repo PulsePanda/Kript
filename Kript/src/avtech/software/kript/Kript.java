@@ -3,6 +3,7 @@ package avtech.software.kript;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.math.BigInteger;
 import java.util.Random;
 
 /**
@@ -28,7 +29,6 @@ public class Kript {
 		n = p.getPrime() * q.getPrime();
 		eN = (p.getPrime() - 1) * (q.getPrime() - 1);
 		genE();
-		genD();
 		genKeys();
 	}
 
@@ -76,8 +76,7 @@ public class Kript {
 	}
 
 	public static void main(String[] args) {
-		// new Kript();
-		System.out.println((65 ^ 17) % 3233);
+		new Kript();
 	}
 
 	// method to copy a file into byte[] taken from the original server software
