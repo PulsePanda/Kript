@@ -16,8 +16,8 @@ public class Kript {
 	private Prime q = new Prime();
 	private long n;
 	private long eN;
-	private int e; // released as the public key exponent
-	private int d = 1; // kept as the private key exponent
+	private long e; // released as the public key exponent
+	private long d = 1; // kept as the private key exponent
 
 	private PrivateKey privateKey;
 	private PublicKey publicKey;
@@ -29,24 +29,30 @@ public class Kript {
 		n = p.getPrime() * q.getPrime();
 		eN = (p.getPrime() - 1) * (q.getPrime() - 1);
 		genE();
+		genD();
 		genKeys();
 	}
 
 	private void genE() {
-		int temp = 7;
-
-		while (!Prime.isCoprime(temp, eN)) {
-			temp++;
+		Prime temp = new Prime();
+		boolean success = false;
+		while (!success) {
+			if (eN % temp.getPrime() == 0)
+				temp = new Prime();
+			else
+				success = true;
 		}
 
-		e = temp;
+		// while (!Prime.isCoprime(temp.getPrime(), eN)) {
+		// temp = new Prime();
+		// }
+
+		e = temp.getPrime();
 	}
 
 	private void genD() {
-		// solve for d given d*e = 1 (mod eN)
-		while ((d * e) % eN != 1) {
-			d++;
-		}
+		d = BigInteger.valueOf(e).modInverse(BigInteger.valueOf(eN))
+				.longValue();
 	}
 
 	private void genKeys() {
@@ -54,46 +60,40 @@ public class Kript {
 		publicKey = new PublicKey(n, e);
 	}
 
-	public long[] encrypt(byte[] bytes) {
-		long[] msg = new long[bytes.length];
+	public long encrypt(byte bytes) {
+		long msg;
 		long n = remotePublicKey.getN();
 		long e = remotePublicKey.getE();
 
-		for (int i = 0; i < msg.length; i++) {
-			msg[i] = (bytes[i]);
-		}
+		long value = bytes;
 
-		return null;
+		for (int z = 0; z < e - 1; z++) {
+			value = (value * bytes) % n;
+		}
+		msg = value;
+
+		return msg;
 	}
 
-	public String decrypt(String s) {
+	public long decrypt(long s) {
+		long msg;
+		long n = privateKey.getN();
+		long d = privateKey.getD();
 
-		return null;
+		long value = s;
+		for (int i = 0; i < d - 1; i++) {
+			value = (value * s) % n;
+		}
+
+		msg = value;
+		return msg;
 	}
 
 	public void setRemotePublicKey(PublicKey k) {
 		remotePublicKey = k;
 	}
 
-	public static void main(String[] args) {
-		new Kript();
-	}
-
-	// method to copy a file into byte[] taken from the original server software
-	public static byte[] copyFile(String dir) {
-		File f = new File(dir);
-		byte[] mybytearray = null;
-
-		try {
-			mybytearray = new byte[(int) f.length()];
-			FileInputStream fis;
-			fis = new FileInputStream(f);
-			BufferedInputStream bis = new BufferedInputStream(fis);
-			bis.read(mybytearray, 0, mybytearray.length);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-
-		return mybytearray;
+	public PublicKey getPublicKey() {
+		return publicKey;
 	}
 }

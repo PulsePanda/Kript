@@ -17,4 +17,8 @@ public class PublicKey extends Key {
 	public long getE() {
 		return e;
 	}
+
+	public void print() {
+		System.out.println("publicKey: n: " + n + " e: " + e);
+	}
 }

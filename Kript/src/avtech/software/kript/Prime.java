@@ -66,58 +66,44 @@ public class Prime {
 		return primeNumber;
 	}
 
-	public static boolean isCoprime(long e, long etfMod) {
+	public static boolean isCoprime(long a, long b) {
 		boolean coprime = false;
-		int size = 0;
-		ArrayList<Long> eList = new ArrayList<Long>();
-		ArrayList<Long> etfModList = new ArrayList<Long>();
-		ArrayList<Long> commonDivisors = new ArrayList<Long>();
+		long size;
+		ArrayList<Long> divisorsA = new ArrayList<Long>();
+		ArrayList<Long> divisorsB = new ArrayList<Long>();
 
-		/**
-		 * generate all divisors in both lists
-		 */
-		for (long i = 1; i < e; i++) {
-			if (e % i == 0) {
-				eList.add(i);
-			}
+		// determine the size variable, filling it with the value of the smaller
+		// `long`
+		size = a;
+		if (size > b)
+			size = b;
+
+		// generate a list of divisors for each variable
+		for (long i = 1; i < size; i++) {
+			if (a % i == 0)
+				divisorsA.add(i);
+			if (b % i == 0)
+				divisorsB.add(i);
 		}
-		for (long i = 1; i < etfMod; i++) {
-			if (etfMod % i == 0) {
-				etfModList.add(i);
-			}
-		}
 
-		/**
-		 * determine which list is shorter, and then use that list to reduce
-		 * errors
-		 */
-		size = eList.size();
-		if (etfModList.size() < size)
-			size = etfModList.size();
+		long largest = 0;
+		for (int i = 0; i < divisorsA.size(); i++) {
+			long temp = divisorsA.get(i);
 
-		/**
-		 * generate a list of common divisors
-		 */
-		for (int i = 0; i < size; i++) {
-			long divisor = eList.get(i);
-			if (etfModList.contains(divisor)) {
-				commonDivisors.add(divisor);
+			if (divisorsB.contains(temp)) {
+				largest = temp;
 			}
 		}
 
-		/**
-		 * check gcd
-		 */
-		long greatest = 0;
-		for (int i = 0; i < commonDivisors.size(); i++) {
-			greatest = commonDivisors.get(i);
-			if (i > 0 && commonDivisors.get(i) > greatest)
-				greatest = commonDivisors.get(i);
-		}
-		if (greatest == 1)
+		if (largest == 1)
 			coprime = true;
 		else
 			coprime = false;
+
 		return coprime;
+	}
+
+	public void print() {
+		System.out.println(primeNumber);
 	}
 }

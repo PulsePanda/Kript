@@ -9,4 +9,16 @@ public class PrivateKey extends Key {
 		this.n = n;
 		this.d = d;
 	}
+
+	public long getN() {
+		return n;
+	}
+
+	public long getD() {
+		return d;
+	}
+
+	public void print() {
+		System.out.println("privateKey: n: " + n + " d: " + d);
+	}
 }
