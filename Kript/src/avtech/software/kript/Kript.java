@@ -2,6 +2,8 @@ package avtech.software.kript;
 
 import java.math.BigInteger;
 
+import javax.swing.JOptionPane;
+
 /**
  * TO ENCODE, MUST SUBMIT A BYTE ARRAY OF THE MESSAGE
  */
@@ -75,9 +77,11 @@ public class Kript {
 		long d = privateKey.getD();
 
 		long value = s;
+
 		for (int i = 0; i < d - 1; i++) {
 			value = (value * s) % n;
 		}
+		JOptionPane.showMessageDialog(null, value);
 
 		msg = value;
 		return msg;

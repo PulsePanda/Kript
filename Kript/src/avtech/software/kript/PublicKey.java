@@ -1,6 +1,8 @@
 package avtech.software.kript;
 
-public class PublicKey extends Key {
+import java.io.Serializable;
+
+public class PublicKey extends Key implements Serializable {
 
 	private long n;
 	private long e;
