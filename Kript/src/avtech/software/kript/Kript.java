@@ -72,19 +72,25 @@ public class Kript {
 	}
 
 	public long decrypt(long s) {
-		long msg;
+		// long msg;
 		long n = privateKey.getN();
 		long d = privateKey.getD();
+		//
+		// long value = s;
+		//
+		// for (int i = 0; i < d - 1; i++) {
+		// value = (value * s) % n;
+		// }
+		// JOptionPane.showMessageDialog(null, value);
+		//
+		// msg = value;
+		// return msg;
+		BigInteger encryptedMessage = new BigInteger(Long.toString(s));
+		BigInteger message = encryptedMessage.modPow(
+				new BigInteger(Long.toString(d)),
+				new BigInteger(Long.toString(n)));
 
-		long value = s;
-
-		for (int i = 0; i < d - 1; i++) {
-			value = (value * s) % n;
-		}
-		JOptionPane.showMessageDialog(null, value);
-
-		msg = value;
-		return msg;
+		return message.longValue();
 	}
 
 	public void setRemotePublicKey(PublicKey k) {
