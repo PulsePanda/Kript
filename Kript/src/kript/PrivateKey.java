@@ -1,4 +1,4 @@
-package avtech.software.kript;
+package kript;
 
 public class PrivateKey extends Key {
 

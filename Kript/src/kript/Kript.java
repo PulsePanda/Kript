@@ -1,4 +1,4 @@
-package avtech.software.kript;
+package kript;
 
 import java.math.BigInteger;
 
