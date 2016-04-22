@@ -23,7 +23,7 @@
 *along with Kript.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package kript;
+package Kript;
 
 import java.math.BigInteger;
 
@@ -35,8 +35,8 @@ import javax.swing.JOptionPane;
 
 public class Kript {
 
-	private Prime p = new Prime();
-	private Prime q = new Prime();
+	private Prime p;
+	private Prime q;
 	private long n;
 	private long eN;
 	private long e; // released as the public key exponent
@@ -46,7 +46,35 @@ public class Kript {
 	private PublicKey publicKey;
 	private PublicKey remotePublicKey;
 
+	/**
+	 * Default constructor. Calling this constructor, Kript will generate it's
+	 * own prime numbers for key creation. However, this method does NOT use
+	 * very large prime numbers, and should only be used for basic encryption.
+	 */
 	public Kript() {
+		p = new Prime();
+		q = new Prime();
+
+		n = p.getPrime() * q.getPrime();
+		eN = (p.getPrime() - 1) * (q.getPrime() - 1);
+		genE();
+		genD();
+		genKeys();
+	}
+
+	/**
+	 * Constructor. Allows you to assign your own prime numbers to Kript for key
+	 * generation.
+	 * 
+	 * @param p1
+	 *            first prime number you want used.
+	 * @param p2
+	 *            second prime number you want used.
+	 */
+	public Kript(long p1, long p2) {
+		p = new Prime(p1);
+		q = new Prime(p2);
+
 		n = p.getPrime() * q.getPrime();
 		eN = (p.getPrime() - 1) * (q.getPrime() - 1);
 		genE();
@@ -72,8 +100,7 @@ public class Kript {
 	}
 
 	private void genD() {
-		d = BigInteger.valueOf(e).modInverse(BigInteger.valueOf(eN))
-				.longValue();
+		d = BigInteger.valueOf(e).modInverse(BigInteger.valueOf(eN)).longValue();
 	}
 
 	private void genKeys() {
@@ -111,8 +138,7 @@ public class Kript {
 		// msg = value;
 		// return msg;
 		BigInteger encryptedMessage = new BigInteger(Long.toString(s));
-		BigInteger message = encryptedMessage.modPow(
-				new BigInteger(Long.toString(d)),
+		BigInteger message = encryptedMessage.modPow(new BigInteger(Long.toString(d)),
 				new BigInteger(Long.toString(n)));
 
 		return message.longValue();

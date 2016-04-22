@@ -23,7 +23,7 @@
 *along with Kript.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package kript;
+package Kript;
 
 public class PrivateKey extends Key {
 

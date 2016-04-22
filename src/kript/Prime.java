@@ -23,7 +23,7 @@
 *along with Kript.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package kript;
+package Kript;
 
 import java.util.ArrayList;
 import java.util.Random;
@@ -36,6 +36,10 @@ public class Prime {
 
 	public Prime() {
 		primeNumber = generatePrime();
+	}
+
+	public Prime(long prime) {
+		primeNumber = prime;
 	}
 
 	private long generatePrime() {
