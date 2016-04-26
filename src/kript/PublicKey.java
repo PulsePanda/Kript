@@ -29,6 +29,10 @@ import java.io.Serializable;
 
 public class PublicKey extends Key implements Serializable {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private long n;
 	private long e;
 

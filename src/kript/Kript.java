@@ -27,8 +27,6 @@ package Kript;
 
 import java.math.BigInteger;
 
-import javax.swing.JOptionPane;
-
 /**
  * TO ENCODE, MUST SUBMIT A BYTE ARRAY OF THE MESSAGE
  */
@@ -108,6 +106,12 @@ public class Kript {
 		publicKey = new PublicKey(n, e);
 	}
 
+	/**
+	 * Encrypt a byte, returns the long version of it.
+	 * 
+	 * @param bytes
+	 * @return
+	 */
 	public long encrypt(byte bytes) {
 		long msg;
 		long n = remotePublicKey.getN();
@@ -123,20 +127,16 @@ public class Kript {
 		return msg;
 	}
 
+	/**
+	 * Decrypt an encrypted byte, return the long version of the decryption.
+	 * 
+	 * @param s
+	 *            encrypted byte message
+	 * @return
+	 */
 	public long decrypt(long s) {
-		// long msg;
 		long n = privateKey.getN();
 		long d = privateKey.getD();
-		//
-		// long value = s;
-		//
-		// for (int i = 0; i < d - 1; i++) {
-		// value = (value * s) % n;
-		// }
-		// JOptionPane.showMessageDialog(null, value);
-		//
-		// msg = value;
-		// return msg;
 		BigInteger encryptedMessage = new BigInteger(Long.toString(s));
 		BigInteger message = encryptedMessage.modPow(new BigInteger(Long.toString(d)),
 				new BigInteger(Long.toString(n)));
