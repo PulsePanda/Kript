@@ -27,8 +27,8 @@ import java.math.BigInteger;
 
 public class Kript {
 
-	private Prime p = new Prime();
-	private Prime q = new Prime();
+	private Prime p;
+	private Prime q;
 	private long n;
 	private long eN;
 	private long e; // released as the public key exponent
@@ -38,7 +38,35 @@ public class Kript {
 	private PublicKey publicKey;
 	private PublicKey remotePublicKey;
 
+	/**
+	 * Default constructor. Calling this constructor, Kript will generate it's
+	 * own prime numbers for key creation. However, this method does NOT use
+	 * very large prime numbers, and should only be used for basic encryption.
+	 */
 	public Kript() {
+		p = new Prime();
+		q = new Prime();
+
+		n = p.getPrime() * q.getPrime();
+		eN = (p.getPrime() - 1) * (q.getPrime() - 1);
+		genE();
+		genD();
+		genKeys();
+	}
+
+	/**
+	 * Constructor. Allows you to assign your own prime numbers to Kript for key
+	 * generation.
+	 * 
+	 * @param p1
+	 *            first prime number you want used.
+	 * @param p2
+	 *            second prime number you want used.
+	 */
+	public Kript(long p1, long p2) {
+		p = new Prime(p1);
+		q = new Prime(p2);
+
 		n = p.getPrime() * q.getPrime();
 		eN = (p.getPrime() - 1) * (q.getPrime() - 1);
 		genE();
@@ -72,6 +100,12 @@ public class Kript {
 		publicKey = new PublicKey(n, e);
 	}
 
+	/**
+	 * Encrypt a byte, returns the long version of it.
+	 * 
+	 * @param bytes
+	 * @return
+	 */
 	public long encrypt(byte bytes) {
 		long msg;
 		long n = remotePublicKey.getN();
@@ -87,20 +121,16 @@ public class Kript {
 		return msg;
 	}
 
+	/**
+	 * Decrypt an encrypted byte, return the long version of the decryption.
+	 * 
+	 * @param s
+	 *            encrypted byte message
+	 * @return
+	 */
 	public long decrypt(long s) {
-		// long msg;
 		long n = privateKey.getN();
 		long d = privateKey.getD();
-		//
-		// long value = s;
-		//
-		// for (int i = 0; i < d - 1; i++) {
-		// value = (value * s) % n;
-		// }
-		// JOptionPane.showMessageDialog(null, value);
-		//
-		// msg = value;
-		// return msg;
 		BigInteger encryptedMessage = new BigInteger(Long.toString(s));
 		BigInteger message = encryptedMessage.modPow(new BigInteger(Long.toString(d)),
 				new BigInteger(Long.toString(n)));

@@ -32,6 +32,10 @@ public class Prime {
 		primeNumber = generatePrime();
 	}
 
+	public Prime(long prime) {
+		primeNumber = prime;
+	}
+
 	private long generatePrime() {
 
 		// make sure the test number is greater than 2
