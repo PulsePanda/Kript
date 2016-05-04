@@ -21,8 +21,6 @@ package Kript;
 
 import java.math.BigInteger;
 
-import javax.swing.JOptionPane;
-
 /**
  * TO ENCODE, MUST SUBMIT A BYTE ARRAY OF THE MESSAGE
  */
