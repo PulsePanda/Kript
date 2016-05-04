@@ -1,26 +1,20 @@
 /*
-* Kript
-* Created by Austin VanAlstyne
-* Open Source with Related GitHub Repo
-*
-* Copyright© 2015 Austin VanAlstyne
-*/
+ *  Kript is a Java based network encryption library
+ * 
+ *  Copyright (C) 2016  Austin VanAlstyne
 
-/*
-*This file is part of Kript.
-*
-*Kript is free software: you can redistribute it and/or modify
-*it under the terms of the GNU General Public License as published by
-*the Free Software Foundation, either version 3 of the License, or
-*(at your option) any later version.
-*
-*Kript is distributed in the hope that it will be useful,
-*but WITHOUT ANY WARRANTY; without even the implied warranty of
-*MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-*GNU General Public License for more details.
-*
-*You should have received a copy of the GNU General Public License
-*along with Kript.  If not, see <http://www.gnu.org/licenses/>.
+ *  This program is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 package Kript;
@@ -72,8 +66,7 @@ public class Kript {
 	}
 
 	private void genD() {
-		d = BigInteger.valueOf(e).modInverse(BigInteger.valueOf(eN))
-				.longValue();
+		d = BigInteger.valueOf(e).modInverse(BigInteger.valueOf(eN)).longValue();
 	}
 
 	private void genKeys() {
@@ -111,8 +104,7 @@ public class Kript {
 		// msg = value;
 		// return msg;
 		BigInteger encryptedMessage = new BigInteger(Long.toString(s));
-		BigInteger message = encryptedMessage.modPow(
-				new BigInteger(Long.toString(d)),
+		BigInteger message = encryptedMessage.modPow(new BigInteger(Long.toString(d)),
 				new BigInteger(Long.toString(n)));
 
 		return message.longValue();
