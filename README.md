@@ -4,7 +4,6 @@ A Java based network encryption library
 # CURRENTLY UNDERGOING REVISION
 
 This encryption library is built as a utility for networking. All that must be done to encrypt and decrypt an object is the following:  
-* ## NOTE THAT THIS FLOW IS ONLY CURRENT BEFORE MAY 1ST 2016 ##
 * Create a Kript object
 * Convert your object into a byte array
 * Pass that byte array to your `long kriptObject.encrypt(byte)` method, one index at a time.
