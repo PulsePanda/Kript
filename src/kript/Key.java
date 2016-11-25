@@ -54,11 +54,4 @@ public class Key {
 	public BigInteger getKeyExponent() {
 		return keyExponent;
 	}
-
-	/**
-	 * Print the key for testing.
-	 */
-	public void print() {
-		System.out.println("privateKey: n: " + primeQuotient + " d: " + keyExponent);
-	}
 }
