@@ -32,8 +32,8 @@ public class Kript {
 	private long primeQuotient; // Both primes multiplied together. Otherwise
 								// known as 'n'
 	private long totient; // (prime1 - 1)(prime2 - 1) formally 'eN'
-	private long publicKeyPrime; // released as the public key exponent
-	private long privateKeyPrime = 1; // kept as the private key exponent
+	private long publicKeyExponent; // released as the public key exponent
+	private long privateKeyExponent = 1; // kept as the private key exponent
 
 	private PrivateKey privateKey;
 	private PublicKey publicKey;
@@ -91,7 +91,7 @@ public class Kript {
 				success = true;
 		}
 
-		publicKeyPrime = temp.getPrime();
+		publicKeyExponent = temp.getPrime();
 	}
 
 	/**
@@ -99,7 +99,7 @@ public class Kript {
 	 * public key prime.
 	 */
 	private void generatePrivateKeyPrime() {
-		privateKeyPrime = BigInteger.valueOf(publicKeyPrime).modInverse(BigInteger.valueOf(totient)).longValue();
+		privateKeyExponent = BigInteger.valueOf(publicKeyExponent).modInverse(BigInteger.valueOf(totient)).longValue();
 	}
 
 	/**
@@ -107,8 +107,8 @@ public class Kript {
 	 * variables.
 	 */
 	private void generateKeypair() {
-		privateKey = new PrivateKey(primeQuotient, privateKeyPrime);
-		publicKey = new PublicKey(primeQuotient, publicKeyPrime);
+		privateKey = new PrivateKey(primeQuotient, privateKeyExponent);
+		publicKey = new PublicKey(primeQuotient, publicKeyExponent);
 	}
 
 	/**
@@ -119,8 +119,8 @@ public class Kript {
 	 */
 	public long encrypt(byte bytes) {
 		long msg;
-		long n = remotePublicKey.getN();
-		long e = remotePublicKey.getE();
+		long n = remotePublicKey.getPrimeQuotient();
+		long e = remotePublicKey.getPublicKeyExponent();
 
 		long value = bytes;
 
@@ -140,8 +140,8 @@ public class Kript {
 	 * @return
 	 */
 	public long decrypt(long s) {
-		long n = privateKey.getN();
-		long d = privateKey.getD();
+		long n = privateKey.getPrimeQuotient();
+		long d = privateKey.getPrivateKeyExponent();
 		BigInteger encryptedMessage = new BigInteger(Long.toString(s));
 		BigInteger message = encryptedMessage.modPow(new BigInteger(Long.toString(d)),
 				new BigInteger(Long.toString(n)));

@@ -23,27 +23,42 @@ import java.io.Serializable;
 
 public class PublicKey extends Key implements Serializable {
 
+	private long primeQuotient;
+	private long publicKeyExponent;
+
 	/**
+	 * Default Constructor.
 	 * 
+	 * @param primeQuotient
+	 * @param publicKeyExponent
 	 */
-	private static final long serialVersionUID = 1L;
-	private long n;
-	private long e;
-
-	public PublicKey(long n, long e) {
-		this.n = n;
-		this.e = e;
+	public PublicKey(long primeQuotient, long publicKeyExponent) {
+		this.primeQuotient = primeQuotient;
+		this.publicKeyExponent = publicKeyExponent;
 	}
 
-	public long getN() {
-		return n;
+	/**
+	 * Get the Prime Quotient
+	 * 
+	 * @return long Prime Quotient
+	 */
+	public long getPrimeQuotient() {
+		return primeQuotient;
 	}
 
-	public long getE() {
-		return e;
+	/**
+	 * Get the Public Key's Exponent
+	 * 
+	 * @return long Public Key Exponent
+	 */
+	public long getPublicKeyExponent() {
+		return publicKeyExponent;
 	}
 
+	/**
+	 * Print key for testing.
+	 */
 	public void print() {
-		System.out.println("publicKey: n: " + n + " e: " + e);
+		System.out.println("publicKey: n: " + primeQuotient + " e: " + publicKeyExponent);
 	}
 }
