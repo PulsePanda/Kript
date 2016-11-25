@@ -35,9 +35,9 @@ public class Kript {
 	private long publicKeyExponent; // released as the public key exponent
 	private long privateKeyExponent = 1; // kept as the private key exponent
 
-	private PrivateKey privateKey;
-	private PublicKey publicKey;
-	private PublicKey remotePublicKey;
+	private Key privateKey;
+	private Key publicKey;
+	private Key remotePublicKey;
 
 	/**
 	 * Default constructor. Calling this constructor, Kript will generate it's
@@ -107,8 +107,8 @@ public class Kript {
 	 * variables.
 	 */
 	private void generateKeypair() {
-		privateKey = new PrivateKey(primeQuotient, privateKeyExponent);
-		publicKey = new PublicKey(primeQuotient, publicKeyExponent);
+		privateKey = new Key(primeQuotient, privateKeyExponent);
+		publicKey = new Key(primeQuotient, publicKeyExponent);
 	}
 
 	/**
@@ -120,7 +120,7 @@ public class Kript {
 	public long encrypt(byte bytes) {
 		long msg;
 		long n = remotePublicKey.getPrimeQuotient();
-		long e = remotePublicKey.getPublicKeyExponent();
+		long e = remotePublicKey.getKeyExponent();
 
 		long value = bytes;
 
@@ -141,7 +141,7 @@ public class Kript {
 	 */
 	public long decrypt(long s) {
 		long n = privateKey.getPrimeQuotient();
-		long d = privateKey.getPrivateKeyExponent();
+		long d = privateKey.getKeyExponent();
 		BigInteger encryptedMessage = new BigInteger(Long.toString(s));
 		BigInteger message = encryptedMessage.modPow(new BigInteger(Long.toString(d)),
 				new BigInteger(Long.toString(n)));
@@ -154,7 +154,7 @@ public class Kript {
 	 * 
 	 * @param k
 	 */
-	public void setRemotePublicKey(PublicKey k) {
+	public void setRemotePublicKey(Key k) {
 		remotePublicKey = k;
 	}
 
@@ -163,7 +163,7 @@ public class Kript {
 	 * 
 	 * @return PublicKey
 	 */
-	public PublicKey getPublicKey() {
+	public Key getPublicKey() {
 		return publicKey;
 	}
 }
