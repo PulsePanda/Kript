@@ -27,17 +27,12 @@ import java.math.BigInteger;
 
 public class Kript {
 
-	private Prime prime1; // First Prime
-	private Prime prime2; // Second Prime
-	private BigInteger primeQuotient; // Both primes multiplied together.
-										// Otherwise
-	// known as 'n'
+	private Prime prime1;
+	private Prime prime2;
+	private BigInteger primeQuotient; // Both primes multiplied together
 	private BigInteger totient; // (prime1 - 1)(prime2 - 1) formally 'eN'
-	private BigInteger publicKeyExponent; // released as the public key exponent
-	private BigInteger privateKeyExponent = new BigInteger("1"); // kept as the
-																	// private
-																	// key
-																	// exponent
+	private BigInteger publicKeyExponent;
+	private BigInteger privateKeyExponent = new BigInteger("1");
 
 	private Key privateKey;
 	private Key publicKey;
@@ -62,9 +57,14 @@ public class Kript {
 	public static void main(String[] args) {
 		byte[] temp = "hello".getBytes();
 		Kript k = new Kript();
-		Key p = new Kript().getPublicKey();
-		k.setRemotePublicKey(p);
-		k.encrypt(temp[0]);
+		k.setRemotePublicKey(k.getPublicKey());
+		BigInteger encryptedMessage = k.encrypt(temp[0]);
+
+		System.out.println(temp[0]); // PRINTS 104 ORIGINAL BEFORE ENCRYPTION
+		System.out.println(String.valueOf(k.decrypt(encryptedMessage))); // PRINTS
+																			// 104
+																			// AFTER
+																			// DECRYPTION
 	}
 
 	/**
@@ -110,24 +110,9 @@ public class Kript {
 	 * @return
 	 */
 	public BigInteger encrypt(byte bytes) {
-		System.out.println("encrypting");
 		BigInteger n = remotePublicKey.getPrimeQuotient();
 		BigInteger e = remotePublicKey.getKeyExponent();
 		BigInteger msg = BigInteger.valueOf(Long.parseLong(String.valueOf(bytes))).modPow(e, n);
-
-//		BigInteger value = new BigInteger(Byte.toString(bytes));
-
-//		BigInteger z = new BigInteger("0");
-//
-//		System.out.println("before for");
-//		BigInteger whileHelper = e.subtract(new BigInteger("1"));
-//		while (whileHelper.compareTo(z) == 1) {
-//			value = (value.multiply(new BigInteger(Byte.toString(bytes)))).mod(n);
-//			z = z.add(new BigInteger("1"));
-//		}
-//		System.out.println("after for");
-
-//		msg = value;
 
 		return msg;
 	}
@@ -135,20 +120,17 @@ public class Kript {
 	/**
 	 * Decrypt an encrypted byte, return the long version of the decryption.
 	 * 
-	 * @param s
-	 *            encrypted byte message
+	 * @param encryptedMessage
+	 *            BigInteger encrypted byte message
 	 * @return
 	 */
-	// public long decrypt(long s) {
-	// long n = privateKey.getPrimeQuotient();
-	// long d = privateKey.getKeyExponent();
-	// BigInteger encryptedMessage = new BigInteger(Long.toString(s));
-	// BigInteger message = encryptedMessage.modPow(new
-	// BigInteger(Long.toString(d)),
-	// new BigInteger(Long.toString(n)));
-	//
-	// return message.longValue();
-	// }
+	public byte decrypt(BigInteger encryptedMessage) {
+		BigInteger n = privateKey.getPrimeQuotient();
+		BigInteger d = privateKey.getKeyExponent();
+		BigInteger message = encryptedMessage.modPow(d, n);
+
+		return message.byteValue();
+	}
 
 	/**
 	 * Set the public key of your connection.
