@@ -19,10 +19,44 @@
 
 package Kript;
 
-@Deprecated
 public class Key {
 
-	public Key() {
+	private long primeQuotient;
+	private long keyExponent;
 
+	/**
+	 * Default Constructor.
+	 * 
+	 * @param primeQuotient
+	 * @param keyExponent
+	 */
+	public Key(long primeQuotient, long keyExponent) {
+		this.primeQuotient = primeQuotient;
+		this.keyExponent = keyExponent;
+	}
+
+	/**
+	 * Get the Prime Quotient
+	 * 
+	 * @return long Prime Quotient
+	 */
+	public long getPrimeQuotient() {
+		return primeQuotient;
+	}
+
+	/**
+	 * Get the Key's Exponent
+	 * 
+	 * @return long Key Exponent
+	 */
+	public long getKeyExponent() {
+		return keyExponent;
+	}
+
+	/**
+	 * Print the key for testing.
+	 */
+	public void print() {
+		System.out.println("privateKey: n: " + primeQuotient + " d: " + keyExponent);
 	}
 }
