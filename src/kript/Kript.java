@@ -27,12 +27,13 @@ import java.math.BigInteger;
 
 public class Kript {
 
-	private Prime p;
-	private Prime q;
-	private long n;
-	private long eN;
-	private long e; // released as the public key exponent
-	private long d = 1; // kept as the private key exponent
+	private Prime prime1; // First Prime
+	private Prime prime2; // Second Prime
+	private long primeQuotient; // Both primes multiplied together. Otherwise
+								// known as 'n'
+	private long totient; // (prime1 - 1)(prime2 - 1) formally 'eN'
+	private long publicKeyPrime; // released as the public key exponent
+	private long privateKeyPrime = 1; // kept as the private key exponent
 
 	private PrivateKey privateKey;
 	private PublicKey publicKey;
@@ -40,21 +41,22 @@ public class Kript {
 
 	/**
 	 * Default constructor. Calling this constructor, Kript will generate it's
-	 * own prime numbers for key creation. However, this method does NOT use
-	 * very large prime numbers, and should only be used for basic encryption.
+	 * own prime numbers for key creation.
 	 */
 	public Kript() {
-		p = new Prime();
-		q = new Prime();
+		prime1 = new Prime();
+		prime2 = new Prime();
 
-		n = p.getPrime() * q.getPrime();
-		eN = (p.getPrime() - 1) * (q.getPrime() - 1);
-		genE();
-		genD();
-		genKeys();
+		primeQuotient = prime1.getPrime() * prime2.getPrime();
+		totient = (prime1.getPrime() - 1) * (prime2.getPrime() - 1);
+		generatePublicKeyPrime();
+		generatePrivateKeyPrime();
+		generateKeypair();
 	}
 
 	/**
+	 * LESS SECURE
+	 * 
 	 * Constructor. Allows you to assign your own prime numbers to Kript for key
 	 * generation.
 	 * 
@@ -64,40 +66,49 @@ public class Kript {
 	 *            second prime number you want used.
 	 */
 	public Kript(long p1, long p2) {
-		p = new Prime(p1);
-		q = new Prime(p2);
+		prime1 = new Prime(p1);
+		prime2 = new Prime(p2);
 
-		n = p.getPrime() * q.getPrime();
-		eN = (p.getPrime() - 1) * (q.getPrime() - 1);
-		genE();
-		genD();
-		genKeys();
+		primeQuotient = prime1.getPrime() * prime2.getPrime();
+		totient = (prime1.getPrime() - 1) * (prime2.getPrime() - 1);
+		generatePublicKeyPrime();
+		generatePrivateKeyPrime();
+		generateKeypair();
 	}
 
-	private void genE() {
+	/**
+	 * Generates the public key's prime number. Creates new prime numbers until
+	 * it is not a factor of the totient. When it is, the publicKeyPrime is
+	 * assigned to it.
+	 */
+	private void generatePublicKeyPrime() {
 		Prime temp = new Prime();
 		boolean success = false;
 		while (!success) {
-			if (eN % temp.getPrime() == 0)
+			if (totient % temp.getPrime() == 0)
 				temp = new Prime();
 			else
 				success = true;
 		}
 
-		// while (!Prime.isCoprime(temp.getPrime(), eN)) {
-		// temp = new Prime();
-		// }
-
-		e = temp.getPrime();
+		publicKeyPrime = temp.getPrime();
 	}
 
-	private void genD() {
-		d = BigInteger.valueOf(e).modInverse(BigInteger.valueOf(eN)).longValue();
+	/**
+	 * Assigns private key prime to the modular multiplicative inverse of the
+	 * public key prime.
+	 */
+	private void generatePrivateKeyPrime() {
+		privateKeyPrime = BigInteger.valueOf(publicKeyPrime).modInverse(BigInteger.valueOf(totient)).longValue();
 	}
 
-	private void genKeys() {
-		privateKey = new PrivateKey(n, d);
-		publicKey = new PublicKey(n, e);
+	/**
+	 * Generates the keypair to be used, assigning them to the appropriate
+	 * variables.
+	 */
+	private void generateKeypair() {
+		privateKey = new PrivateKey(primeQuotient, privateKeyPrime);
+		publicKey = new PublicKey(primeQuotient, publicKeyPrime);
 	}
 
 	/**
@@ -138,10 +149,20 @@ public class Kript {
 		return message.longValue();
 	}
 
+	/**
+	 * Set the public key of your connection.
+	 * 
+	 * @param k
+	 */
 	public void setRemotePublicKey(PublicKey k) {
 		remotePublicKey = k;
 	}
 
+	/**
+	 * Get the public key.
+	 * 
+	 * @return PublicKey
+	 */
 	public PublicKey getPublicKey() {
 		return publicKey;
 	}
