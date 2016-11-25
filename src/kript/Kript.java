@@ -27,96 +27,92 @@ import java.math.BigInteger;
 
 public class Kript {
 
-	private Prime p;
-	private Prime q;
-	private long n;
-	private long eN;
-	private long e; // released as the public key exponent
-	private long d = 1; // kept as the private key exponent
+	private Prime prime1;
+	private Prime prime2;
+	private BigInteger primeQuotient; // Both primes multiplied together
+	private BigInteger totient; // (prime1 - 1)(prime2 - 1) formally 'eN'
+	private BigInteger publicKeyExponent;
+	private BigInteger privateKeyExponent = new BigInteger("1");
 
-	private PrivateKey privateKey;
-	private PublicKey publicKey;
-	private PublicKey remotePublicKey;
+	private Key privateKey;
+	private Key publicKey;
+	private Key remotePublicKey;
 
 	/**
 	 * Default constructor. Calling this constructor, Kript will generate it's
-	 * own prime numbers for key creation. However, this method does NOT use
-	 * very large prime numbers, and should only be used for basic encryption.
+	 * own prime numbers for key creation.
 	 */
 	public Kript() {
-		p = new Prime();
-		q = new Prime();
+		prime1 = new Prime();
+		prime2 = new Prime();
 
-		n = p.getPrime() * q.getPrime();
-		eN = (p.getPrime() - 1) * (q.getPrime() - 1);
-		genE();
-		genD();
-		genKeys();
+		primeQuotient = prime1.getPrime().multiply(prime2.getPrime());
+		totient = (prime1.getPrime().subtract(new BigInteger("1")))
+				.multiply((prime2.getPrime().subtract(new BigInteger("1"))));
+		generatePublicKeyPrime();
+		generatePrivateKeyPrime();
+		generateKeypair();
+	}
+
+	public static void main(String[] args) {
+		byte[] temp = "hello".getBytes();
+		Kript k = new Kript();
+		k.setRemotePublicKey(k.getPublicKey());
+		BigInteger encryptedMessage = k.encrypt(temp[0]);
+
+		System.out.println(temp[0]); // PRINTS 104 ORIGINAL BEFORE ENCRYPTION
+		System.out.println(String.valueOf(k.decrypt(encryptedMessage))); // PRINTS
+																			// 104
+																			// AFTER
+																			// DECRYPTION
 	}
 
 	/**
-	 * Constructor. Allows you to assign your own prime numbers to Kript for key
-	 * generation.
-	 * 
-	 * @param p1
-	 *            first prime number you want used.
-	 * @param p2
-	 *            second prime number you want used.
+	 * Generates the public key's prime number. Creates new prime numbers until
+	 * it is not a factor of the totient. When it is, the publicKeyPrime is
+	 * assigned to it.
 	 */
-	public Kript(long p1, long p2) {
-		p = new Prime(p1);
-		q = new Prime(p2);
-
-		n = p.getPrime() * q.getPrime();
-		eN = (p.getPrime() - 1) * (q.getPrime() - 1);
-		genE();
-		genD();
-		genKeys();
-	}
-
-	private void genE() {
+	private void generatePublicKeyPrime() {
 		Prime temp = new Prime();
 		boolean success = false;
 		while (!success) {
-			if (eN % temp.getPrime() == 0)
+			if (totient.mod(temp.getPrime()).equals(0))
 				temp = new Prime();
 			else
 				success = true;
 		}
 
-		// while (!Prime.isCoprime(temp.getPrime(), eN)) {
-		// temp = new Prime();
-		// }
-
-		e = temp.getPrime();
+		publicKeyExponent = temp.getPrime();
 	}
 
-	private void genD() {
-		d = BigInteger.valueOf(e).modInverse(BigInteger.valueOf(eN)).longValue();
+	/**
+	 * Assigns private key prime to the modular multiplicative inverse of the
+	 * public key prime.
+	 */
+	private void generatePrivateKeyPrime() {
+		privateKeyExponent = publicKeyExponent.modInverse(totient);
 	}
 
-	private void genKeys() {
-		privateKey = new PrivateKey(n, d);
-		publicKey = new PublicKey(n, e);
+	/**
+	 * Generates the keypair to be used, assigning them to the appropriate
+	 * variables.
+	 */
+	private void generateKeypair() {
+		privateKey = new Key(primeQuotient, privateKeyExponent);
+		publicKey = new Key(primeQuotient, publicKeyExponent);
 	}
 
 	/**
 	 * Encrypt a byte, returns the long version of it.
 	 * 
-	 * @param bytes
+	 * @param bytes[]
+	 *            Byte array to encrypt
 	 * @return
 	 */
-	public long encrypt(byte bytes) {
-		long msg;
-		long n = remotePublicKey.getN();
-		long e = remotePublicKey.getE();
-
-		long value = bytes;
-
-		for (int z = 0; z < e - 1; z++) {
-			value = (value * bytes) % n;
-		}
-		msg = value;
+	public BigInteger encrypt(byte bytes) {
+		BigInteger n = remotePublicKey.getPrimeQuotient();
+		BigInteger e = remotePublicKey.getKeyExponent();
+		BigInteger msg = BigInteger.valueOf(Long.parseLong(String.valueOf(bytes))).modPow(e, n);
 
 		return msg;
 	}
@@ -124,25 +120,33 @@ public class Kript {
 	/**
 	 * Decrypt an encrypted byte, return the long version of the decryption.
 	 * 
-	 * @param s
-	 *            encrypted byte message
+	 * @param encryptedMessage
+	 *            BigInteger encrypted byte message
 	 * @return
 	 */
-	public long decrypt(long s) {
-		long n = privateKey.getN();
-		long d = privateKey.getD();
-		BigInteger encryptedMessage = new BigInteger(Long.toString(s));
-		BigInteger message = encryptedMessage.modPow(new BigInteger(Long.toString(d)),
-				new BigInteger(Long.toString(n)));
+	public byte decrypt(BigInteger encryptedMessage) {
+		BigInteger n = privateKey.getPrimeQuotient();
+		BigInteger d = privateKey.getKeyExponent();
+		BigInteger message = encryptedMessage.modPow(d, n);
 
-		return message.longValue();
+		return message.byteValue();
 	}
 
-	public void setRemotePublicKey(PublicKey k) {
+	/**
+	 * Set the public key of your connection.
+	 * 
+	 * @param k
+	 */
+	public void setRemotePublicKey(Key k) {
 		remotePublicKey = k;
 	}
 
-	public PublicKey getPublicKey() {
+	/**
+	 * Get the public key.
+	 * 
+	 * @return PublicKey
+	 */
+	public Key getPublicKey() {
 		return publicKey;
 	}
 }

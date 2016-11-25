@@ -19,9 +19,39 @@
 
 package Kript;
 
+import java.math.BigInteger;
+
 public class Key {
 
-	public Key() {
+	private BigInteger primeQuotient;
+	private BigInteger keyExponent;
 
+	/**
+	 * Default Constructor.
+	 * 
+	 * @param primeQuotient
+	 * @param keyExponent
+	 */
+	public Key(BigInteger primeQuotient, BigInteger keyExponent) {
+		this.primeQuotient = primeQuotient;
+		this.keyExponent = keyExponent;
+	}
+
+	/**
+	 * Get the Prime Quotient
+	 * 
+	 * @return BigInteger Prime Quotient
+	 */
+	public BigInteger getPrimeQuotient() {
+		return primeQuotient;
+	}
+
+	/**
+	 * Get the Key's Exponent
+	 * 
+	 * @return BigInteger Key Exponent
+	 */
+	public BigInteger getKeyExponent() {
+		return keyExponent;
 	}
 }
