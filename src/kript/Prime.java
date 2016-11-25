@@ -28,14 +28,28 @@ public class Prime {
 	private boolean prime = false;
 	private Random random = new Random();
 
+	/**
+	 * Default constructor. Generates its own 512 bit prime number.
+	 */
 	public Prime() {
 		primeNumber = generatePrime();
 	}
 
+	/**
+	 * Constructor allows you to supply the prime number to be used.
+	 * 
+	 * @param prime
+	 *            number you want used.
+	 */
 	public Prime(long prime) {
 		primeNumber = prime;
 	}
 
+	/**
+	 * Generate the prime number being used.
+	 * 
+	 * @return long prime number.
+	 */
 	private long generatePrime() {
 
 		// make sure the test number is greater than 2
@@ -85,10 +99,16 @@ public class Prime {
 		return number;
 	}
 
+	/**
+	 * Get the prime number.
+	 * 
+	 * @return long prime number.
+	 */
 	public long getPrime() {
 		return primeNumber;
 	}
 
+	@Deprecated
 	public static boolean isCoprime(long a, long b) {
 		boolean coprime = false;
 		long size;
@@ -126,6 +146,10 @@ public class Prime {
 		return coprime;
 	}
 
+	/**
+	 * Prints out prime number for testing.
+	 */
+	@Deprecated
 	public void print() {
 		System.out.println(primeNumber);
 	}

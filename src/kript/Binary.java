@@ -19,6 +19,7 @@
 
 package Kript;
 
+@Deprecated
 public class Binary {
 	public static String toBinaryString(String s, boolean withSpaces) {
 		byte[] bytes = s.getBytes();

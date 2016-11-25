@@ -21,23 +21,42 @@ package Kript;
 
 public class PrivateKey extends Key {
 
-	private long n;
-	private long d;
+	private long primeQuotient;
+	private long privateKeyExponent;
 
-	public PrivateKey(long n, long d) {
-		this.n = n;
-		this.d = d;
+	/**
+	 * Default Constructor.
+	 * 
+	 * @param primeQuotient
+	 * @param privateKeyExponent
+	 */
+	public PrivateKey(long primeQuotient, long privateKeyExponent) {
+		this.primeQuotient = primeQuotient;
+		this.privateKeyExponent = privateKeyExponent;
 	}
 
-	public long getN() {
-		return n;
+	/**
+	 * Get the Prime Quotient
+	 * 
+	 * @return long Prime Quotient
+	 */
+	public long getPrimeQuotient() {
+		return primeQuotient;
 	}
 
-	public long getD() {
-		return d;
+	/**
+	 * Get the Private Key's Exponent
+	 * 
+	 * @return long Private Key Exponent
+	 */
+	public long getPrivateKeyExponent() {
+		return privateKeyExponent;
 	}
 
+	/**
+	 * Print the key for testing.
+	 */
 	public void print() {
-		System.out.println("privateKey: n: " + n + " d: " + d);
+		System.out.println("privateKey: n: " + primeQuotient + " d: " + privateKeyExponent);
 	}
 }

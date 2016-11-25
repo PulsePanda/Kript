@@ -19,6 +19,7 @@
 
 package Kript;
 
+@Deprecated
 public class Key {
 
 	public Key() {
