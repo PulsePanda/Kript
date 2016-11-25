@@ -29,11 +29,11 @@ public class Kript {
 
 	private Prime prime1; // First Prime
 	private Prime prime2; // Second Prime
-	private long primeQuotient; // Both primes multiplied together. Otherwise
+	private BigInteger primeQuotient; // Both primes multiplied together. Otherwise
 								// known as 'n'
-	private long totient; // (prime1 - 1)(prime2 - 1) formally 'eN'
-	private long publicKeyExponent; // released as the public key exponent
-	private long privateKeyExponent = 1; // kept as the private key exponent
+	private BigInteger totient; // (prime1 - 1)(prime2 - 1) formally 'eN'
+	private BigInteger publicKeyExponent; // released as the public key exponent
+	private BigInteger privateKeyExponent = new BigInteger("1"); // kept as the private key exponent
 
 	private Key privateKey;
 	private Key publicKey;
@@ -47,33 +47,15 @@ public class Kript {
 		prime1 = new Prime();
 		prime2 = new Prime();
 
-		primeQuotient = prime1.getPrime() * prime2.getPrime();
-		totient = (prime1.getPrime() - 1) * (prime2.getPrime() - 1);
+		primeQuotient = prime1.getPrime().multiply(prime2.getPrime());
+		totient = (prime1.getPrime().subtract(new BigInteger("1"))).multiply((prime2.getPrime().subtract(new BigInteger("1"))));
 		generatePublicKeyPrime();
 		generatePrivateKeyPrime();
 		generateKeypair();
 	}
-
-	/**
-	 * LESS SECURE
-	 * 
-	 * Constructor. Allows you to assign your own prime numbers to Kript for key
-	 * generation.
-	 * 
-	 * @param p1
-	 *            first prime number you want used.
-	 * @param p2
-	 *            second prime number you want used.
-	 */
-	public Kript(long p1, long p2) {
-		prime1 = new Prime(p1);
-		prime2 = new Prime(p2);
-
-		primeQuotient = prime1.getPrime() * prime2.getPrime();
-		totient = (prime1.getPrime() - 1) * (prime2.getPrime() - 1);
-		generatePublicKeyPrime();
-		generatePrivateKeyPrime();
-		generateKeypair();
+	
+	public static void main(String[] args){
+		new Kript();
 	}
 
 	/**
@@ -85,7 +67,7 @@ public class Kript {
 		Prime temp = new Prime();
 		boolean success = false;
 		while (!success) {
-			if (totient % temp.getPrime() == 0)
+			if (totient.mod(temp.getPrime()).equals(0))
 				temp = new Prime();
 			else
 				success = true;
@@ -99,7 +81,7 @@ public class Kript {
 	 * public key prime.
 	 */
 	private void generatePrivateKeyPrime() {
-		privateKeyExponent = BigInteger.valueOf(publicKeyExponent).modInverse(BigInteger.valueOf(totient)).longValue();
+		privateKeyExponent = publicKeyExponent.modInverse(totient);
 	}
 
 	/**
@@ -117,20 +99,20 @@ public class Kript {
 	 * @param bytes
 	 * @return
 	 */
-	public long encrypt(byte bytes) {
-		long msg;
-		long n = remotePublicKey.getPrimeQuotient();
-		long e = remotePublicKey.getKeyExponent();
-
-		long value = bytes;
-
-		for (int z = 0; z < e - 1; z++) {
-			value = (value * bytes) % n;
-		}
-		msg = value;
-
-		return msg;
-	}
+//	public long encrypt(byte bytes) {
+//		long msg;
+//		long n = remotePublicKey.getPrimeQuotient();
+//		long e = remotePublicKey.getKeyExponent();
+//
+//		long value = bytes;
+//
+//		for (int z = 0; z < e - 1; z++) {
+//			value = (value * bytes) % n;
+//		}
+//		msg = value;
+//
+//		return msg;
+//	}
 
 	/**
 	 * Decrypt an encrypted byte, return the long version of the decryption.
@@ -139,15 +121,15 @@ public class Kript {
 	 *            encrypted byte message
 	 * @return
 	 */
-	public long decrypt(long s) {
-		long n = privateKey.getPrimeQuotient();
-		long d = privateKey.getKeyExponent();
-		BigInteger encryptedMessage = new BigInteger(Long.toString(s));
-		BigInteger message = encryptedMessage.modPow(new BigInteger(Long.toString(d)),
-				new BigInteger(Long.toString(n)));
-
-		return message.longValue();
-	}
+//	public long decrypt(long s) {
+//		long n = privateKey.getPrimeQuotient();
+//		long d = privateKey.getKeyExponent();
+//		BigInteger encryptedMessage = new BigInteger(Long.toString(s));
+//		BigInteger message = encryptedMessage.modPow(new BigInteger(Long.toString(d)),
+//				new BigInteger(Long.toString(n)));
+//
+//		return message.longValue();
+//	}
 
 	/**
 	 * Set the public key of your connection.
