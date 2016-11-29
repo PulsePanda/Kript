@@ -52,6 +52,7 @@ public class Kript {
 		generatePublicKeyPrime();
 		generatePrivateKeyPrime();
 		generateKeypair();
+		System.out.println("KRIPT: Kript keys created and ready to be used.");
 	}
 
 	public static void main(String[] args) {
