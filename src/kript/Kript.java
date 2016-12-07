@@ -38,20 +38,12 @@ public class Kript {
 	private PublicKey remotePublicKey;
 
 	/**
-	 * Default constructor. Calling this constructor, Kript will generate it's
-	 * own prime numbers for key creation.
+	 * Default constructor.
 	 * 
 	 * @throws NoSuchAlgorithmException
+	 *             if there is an issue with creating the RSA keys.
 	 */
 	public Kript() throws NoSuchAlgorithmException {
-		// prime1 = new Prime();
-		// prime2 = new Prime();
-		//
-		// primeQuotient = prime1.getPrime().multiply(prime2.getPrime());
-		// totient = (prime1.getPrime().subtract(new BigInteger("1")))
-		// .multiply((prime2.getPrime().subtract(new BigInteger("1"))));
-		// generatePublicKeyPrime();
-		// generatePrivateKeyPrime();
 		generateKeypair();
 		System.out.println("KRIPT: Kript keys created and ready to be used.");
 	}
@@ -107,7 +99,7 @@ public class Kript {
 	 * 
 	 * @param bytes[]
 	 *            Byte array to encrypt
-	 * @return BigInteger[] of encrypted message
+	 * @return byte[] containing encrypted message
 	 * @throws Exception
 	 *             if there is an error with the encryption.
 	 */
@@ -125,17 +117,20 @@ public class Kript {
 	 * Decrypt an encrypted byte, return the long version of the decryption.
 	 * 
 	 * @param encryptedMessage
-	 *            BigInteger[] encrypted byte message
+	 *            byte[] containing encrypted byte message
 	 * @return byte[] array containing message values
+	 * 
+	 * @throws Exception
+	 *             if there is an issue creating RSA cipher to decrypt.
 	 */
-	public byte[] decrypt(byte[] msg) throws Exception {
+	public byte[] decrypt(byte[] encryptedMessage) throws Exception {
 		byte[] decrypted = null;
 		// get an RSA cipher object and print the provider
 		final Cipher cipher = Cipher.getInstance("RSA");
 
 		// decrypt the text using the private key
 		cipher.init(Cipher.DECRYPT_MODE, privateKey);
-		decrypted = cipher.doFinal(msg);
+		decrypted = cipher.doFinal(encryptedMessage);
 
 		return decrypted;
 	}
@@ -144,6 +139,7 @@ public class Kript {
 	 * Set the public key of your connection.
 	 * 
 	 * @param k
+	 *            remote public key
 	 */
 	public void setRemotePublicKey(PublicKey k) {
 		remotePublicKey = k;
