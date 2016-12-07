@@ -20,6 +20,11 @@
 package Kript;
 
 import java.math.BigInteger;
+import java.security.KeyPairGenerator;
+import java.security.NoSuchAlgorithmException;
+
+import javax.xml.bind.DatatypeConverter;
+import javax.xml.bind.annotation.adapters.HexBinaryAdapter;
 
 /**
  * TO ENCODE, MUST SUBMIT A BYTE ARRAY OF THE MESSAGE
@@ -55,17 +60,26 @@ public class Kript {
 		System.out.println("KRIPT: Kript keys created and ready to be used.");
 	}
 
-	public static void main(String[] args) {
-		byte[] temp = "hello".getBytes();
+	public Kript(boolean a) throws NoSuchAlgorithmException {
+		KeyPairGenerator gen = KeyPairGenerator.getInstance("RSA");
+		gen.initialize(512);
+		byte[] key = gen.generateKeyPair().getPublic().getEncoded();
+		StringBuffer retString = new StringBuffer();
+        for (int i = 0; i < key.length; ++i) {
+            retString.append(Integer.toHexString(0x0100 + (key[i] & 0x00FF)).substring(1));
+        }
+        System.out.println(retString);
+	}
+
+	public static void main(String[] args) throws NoSuchAlgorithmException {
+		byte[] temp = "0xAC".getBytes();
 		Kript k = new Kript();
 		k.setRemotePublicKey(k.getPublicKey());
-		BigInteger encryptedMessage = k.encrypt(temp[0]);
+		BigInteger[] encryptedMessage = k.encrypt(temp);
 
-		System.out.println(temp[0]); // PRINTS 104 ORIGINAL BEFORE ENCRYPTION
-		System.out.println(String.valueOf(k.decrypt(encryptedMessage))); // PRINTS
-																			// 104
-																			// AFTER
-																			// DECRYPTION
+		System.out.println(temp);
+		System.out.println(String.valueOf(k.decrypt(encryptedMessage)));
+//		new Kript(true);
 	}
 
 	/**
@@ -108,12 +122,16 @@ public class Kript {
 	 * 
 	 * @param bytes[]
 	 *            Byte array to encrypt
-	 * @return
+	 * @return BigInteger[] of encrypted message
 	 */
-	public BigInteger encrypt(byte bytes) {
+	public BigInteger[] encrypt(byte[] bytes) {
 		BigInteger n = remotePublicKey.getPrimeQuotient();
 		BigInteger e = remotePublicKey.getKeyExponent();
-		BigInteger msg = BigInteger.valueOf(Long.parseLong(String.valueOf(bytes))).modPow(e, n);
+		BigInteger[] msg = new BigInteger[bytes.length];
+
+		for (int i = 0; i < bytes.length; i++) {
+			msg[i] = BigInteger.valueOf(Long.parseLong(String.valueOf(bytes[i]))).modPow(e, n);
+		}
 
 		return msg;
 	}
@@ -122,15 +140,20 @@ public class Kript {
 	 * Decrypt an encrypted byte, return the long version of the decryption.
 	 * 
 	 * @param encryptedMessage
-	 *            BigInteger encrypted byte message
-	 * @return
+	 *            BigInteger[] encrypted byte message
+	 * @return byte[] array containing message values
 	 */
-	public byte decrypt(BigInteger encryptedMessage) {
+	public byte[] decrypt(BigInteger[] encryptedMessage) {
 		BigInteger n = privateKey.getPrimeQuotient();
 		BigInteger d = privateKey.getKeyExponent();
-		BigInteger message = encryptedMessage.modPow(d, n);
 
-		return message.byteValue();
+		byte[] message = new byte[encryptedMessage.length];
+
+		for (int i = 0; i < encryptedMessage.length; i++) {
+			message[i] = encryptedMessage[i].modPow(d, n).byteValue();
+		}
+
+		return message;
 	}
 
 	/**
