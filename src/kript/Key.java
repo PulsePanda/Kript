@@ -19,9 +19,10 @@
 
 package Kript;
 
+import java.io.Serializable;
 import java.math.BigInteger;
 
-public class Key {
+public class Key implements Serializable {
 
 	private BigInteger primeQuotient;
 	private BigInteger keyExponent;
