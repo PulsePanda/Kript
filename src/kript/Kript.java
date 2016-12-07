@@ -19,12 +19,13 @@
 
 package Kript;
 
-import java.math.BigInteger;
+import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.NoSuchAlgorithmException;
+import java.security.PrivateKey;
+import java.security.PublicKey;
 
-import javax.xml.bind.DatatypeConverter;
-import javax.xml.bind.annotation.adapters.HexBinaryAdapter;
+import javax.crypto.Cipher;
 
 /**
  * TO ENCODE, MUST SUBMIT A BYTE ARRAY OF THE MESSAGE
@@ -32,89 +33,65 @@ import javax.xml.bind.annotation.adapters.HexBinaryAdapter;
 
 public class Kript {
 
-	private Prime prime1;
-	private Prime prime2;
-	private BigInteger primeQuotient; // Both primes multiplied together
-	private BigInteger totient; // (prime1 - 1)(prime2 - 1) formally 'eN'
-	private BigInteger publicKeyExponent;
-	private BigInteger privateKeyExponent = new BigInteger("1");
-
-	private Key privateKey;
-	private Key publicKey;
-	private Key remotePublicKey;
+	private PrivateKey privateKey;
+	private PublicKey publicKey;
+	private PublicKey remotePublicKey;
 
 	/**
-	 * Default constructor. Calling this constructor, Kript will generate it's
-	 * own prime numbers for key creation.
+	 * Default constructor.
+	 * 
+	 * @throws NoSuchAlgorithmException
+	 *             if there is an issue with creating the RSA keys.
 	 */
-	public Kript() {
-		prime1 = new Prime();
-		prime2 = new Prime();
-
-		primeQuotient = prime1.getPrime().multiply(prime2.getPrime());
-		totient = (prime1.getPrime().subtract(new BigInteger("1")))
-				.multiply((prime2.getPrime().subtract(new BigInteger("1"))));
-		generatePublicKeyPrime();
-		generatePrivateKeyPrime();
+	public Kript() throws NoSuchAlgorithmException {
 		generateKeypair();
 		System.out.println("KRIPT: Kript keys created and ready to be used.");
 	}
 
-	public Kript(boolean a) throws NoSuchAlgorithmException {
-		KeyPairGenerator gen = KeyPairGenerator.getInstance("RSA");
-		gen.initialize(512);
-		byte[] key = gen.generateKeyPair().getPublic().getEncoded();
-		StringBuffer retString = new StringBuffer();
-        for (int i = 0; i < key.length; ++i) {
-            retString.append(Integer.toHexString(0x0100 + (key[i] & 0x00FF)).substring(1));
-        }
-        System.out.println(retString);
-	}
-
 	public static void main(String[] args) throws NoSuchAlgorithmException {
-		byte[] temp = "0xAC".getBytes();
-		Kript k = new Kript();
-		k.setRemotePublicKey(k.getPublicKey());
-		BigInteger[] encryptedMessage = k.encrypt(temp);
+		try {
+			Kript k = new Kript();
 
-		System.out.println(temp);
-		System.out.println(String.valueOf(k.decrypt(encryptedMessage)));
-//		new Kript(true);
-	}
+			final String originalText = "Text to be encrypted !@#$%^&*()_+";
+			final byte[] cipherText = k.encrypt(originalText.getBytes());
+			final byte[] decrypted = k.decrypt(cipherText);
 
-	/**
-	 * Generates the public key's prime number. Creates new prime numbers until
-	 * it is not a factor of the totient. When it is, the publicKeyPrime is
-	 * assigned to it.
-	 */
-	private void generatePublicKeyPrime() {
-		Prime temp = new Prime();
-		boolean success = false;
-		while (!success) {
-			if (totient.mod(temp.getPrime()).equals(0))
-				temp = new Prime();
-			else
-				success = true;
+			// Printing the Original, Encrypted and Decrypted Text
+			System.out.println("Original Text: " + originalText);
+
+			StringBuffer retString = new StringBuffer();
+			for (int i = 0; i < cipherText.length; ++i) {
+				retString.append(Integer.toHexString(0x0100 + (cipherText[i] & 0x00FF)).substring(1));
+			}
+
+			System.out.println("Encrypted Text: " + retString);
+
+			String retString1 = new String(decrypted);
+
+			System.out.println("Decrypted Text: " + retString1);
+
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
-
-		publicKeyExponent = temp.getPrime();
-	}
-
-	/**
-	 * Assigns private key prime to the modular multiplicative inverse of the
-	 * public key prime.
-	 */
-	private void generatePrivateKeyPrime() {
-		privateKeyExponent = publicKeyExponent.modInverse(totient);
 	}
 
 	/**
 	 * Generates the keypair to be used, assigning them to the appropriate
 	 * variables.
+	 * 
+	 * @throws NoSuchAlgorithmException
+	 *             thrown if RSA is unable to be found.
 	 */
-	private void generateKeypair() {
-		privateKey = new Key(primeQuotient, privateKeyExponent);
-		publicKey = new Key(primeQuotient, publicKeyExponent);
+	private void generateKeypair() throws NoSuchAlgorithmException {
+		final KeyPairGenerator keyGen = KeyPairGenerator.getInstance("RSA");
+		keyGen.initialize(1024);
+		final KeyPair key = keyGen.generateKeyPair();
+
+		publicKey = key.getPublic();
+
+		privateKey = key.getPrivate();
+
+		// remotePublicKey = key.getPublic();
 	}
 
 	/**
@@ -122,46 +99,49 @@ public class Kript {
 	 * 
 	 * @param bytes[]
 	 *            Byte array to encrypt
-	 * @return BigInteger[] of encrypted message
+	 * @return byte[] containing encrypted message
+	 * @throws Exception
+	 *             if there is an error with the encryption.
 	 */
-	public BigInteger[] encrypt(byte[] bytes) {
-		BigInteger n = remotePublicKey.getPrimeQuotient();
-		BigInteger e = remotePublicKey.getKeyExponent();
-		BigInteger[] msg = new BigInteger[bytes.length];
-
-		for (int i = 0; i < bytes.length; i++) {
-			msg[i] = BigInteger.valueOf(Long.parseLong(String.valueOf(bytes[i]))).modPow(e, n);
-		}
-
-		return msg;
+	public byte[] encrypt(byte[] bytes) throws Exception {
+		byte[] cipherText = null;
+		// get an RSA cipher object and print the provider
+		final Cipher cipher = Cipher.getInstance("RSA");
+		// encrypt the plain text using the public key
+		cipher.init(Cipher.ENCRYPT_MODE, remotePublicKey);
+		cipherText = cipher.doFinal(bytes);
+		return cipherText;
 	}
 
 	/**
 	 * Decrypt an encrypted byte, return the long version of the decryption.
 	 * 
 	 * @param encryptedMessage
-	 *            BigInteger[] encrypted byte message
+	 *            byte[] containing encrypted byte message
 	 * @return byte[] array containing message values
+	 * 
+	 * @throws Exception
+	 *             if there is an issue creating RSA cipher to decrypt.
 	 */
-	public byte[] decrypt(BigInteger[] encryptedMessage) {
-		BigInteger n = privateKey.getPrimeQuotient();
-		BigInteger d = privateKey.getKeyExponent();
+	public byte[] decrypt(byte[] encryptedMessage) throws Exception {
+		byte[] decrypted = null;
+		// get an RSA cipher object and print the provider
+		final Cipher cipher = Cipher.getInstance("RSA");
 
-		byte[] message = new byte[encryptedMessage.length];
+		// decrypt the text using the private key
+		cipher.init(Cipher.DECRYPT_MODE, privateKey);
+		decrypted = cipher.doFinal(encryptedMessage);
 
-		for (int i = 0; i < encryptedMessage.length; i++) {
-			message[i] = encryptedMessage[i].modPow(d, n).byteValue();
-		}
-
-		return message;
+		return decrypted;
 	}
 
 	/**
 	 * Set the public key of your connection.
 	 * 
 	 * @param k
+	 *            remote public key
 	 */
-	public void setRemotePublicKey(Key k) {
+	public void setRemotePublicKey(PublicKey k) {
 		remotePublicKey = k;
 	}
 
@@ -170,7 +150,7 @@ public class Kript {
 	 * 
 	 * @return PublicKey
 	 */
-	public Key getPublicKey() {
+	public PublicKey getPublicKey() {
 		return publicKey;
 	}
 }
