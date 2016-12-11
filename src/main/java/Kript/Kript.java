@@ -1,6 +1,6 @@
 /*
  *  Kript is a Java based network encryption library
- * 
+ *
  *  Copyright (C) 2016  Austin VanAlstyne
 
  *  This program is free software: you can redistribute it and/or modify
@@ -42,7 +42,7 @@ public class Kript {
 
 	/**
 	 * Default constructor.
-	 * 
+	 *
 	 * @throws NoSuchAlgorithmException
 	 *             if there is an issue with creating the RSA keys.
 	 */
@@ -76,7 +76,7 @@ public class Kript {
 	/**
 	 * Generates the keypair to be used, assigning them to the appropriate
 	 * variables.
-	 * 
+	 *
 	 * @throws NoSuchAlgorithmException
 	 *             thrown if RSA is unable to be found.
 	 */
@@ -94,7 +94,7 @@ public class Kript {
 
 	/**
 	 * Encrypt a byte, returns the long version of it.
-	 * 
+	 *
 	 * @param bytes[]
 	 *            Byte array to encrypt
 	 * @return byte[] containing encrypted message
@@ -109,11 +109,11 @@ public class Kript {
 
 	/**
 	 * Decrypt an encrypted byte, return the long version of the decryption.
-	 * 
+	 *
 	 * @param encryptedMessage
 	 *            byte[] containing encrypted byte message
 	 * @return byte[] array containing message values
-	 * 
+	 *
 	 * @throws Exception
 	 *             if there is an issue creating RSA cipher to decrypt.
 	 */
@@ -126,7 +126,7 @@ public class Kript {
 	/**
 	 * Handle the RSA side of things. Allows for items larger than the block
 	 * size to be encoded.
-	 * 
+	 *
 	 * @param bytes
 	 *            byte[] array containing either plain or encoded data.
 	 * @param cipher
@@ -213,7 +213,7 @@ public class Kript {
 
 	/**
 	 * Set the public key of your connection.
-	 * 
+	 *
 	 * @param k
 	 *            remote public key
 	 */
@@ -223,7 +223,7 @@ public class Kript {
 
 	/**
 	 * Get the public key.
-	 * 
+	 *
 	 * @return PublicKey
 	 */
 	public PublicKey getPublicKey() {
