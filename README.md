@@ -2,7 +2,7 @@
 A Java built RSA network encryption library.
 
 ## How to build
-Kript is built with a Gradle wrapper. To build the software yourself, clone or download the repository. Access the directory with your command line. Type 
+Kript is built with a Gradle wrapper. After cloning or downloading the repository, navigate to the root folder and open your command line. Execute `gradlew build`. That will create the jar file in build/libs.
 
 ## How to use Kript in your own software
 Kript is designed to be built into a .jar file and included in your project as a library. After you have the project set up with Kript included, simply create a Kript object. The constructor creates all the keys and provides methods to access the public key to send to the connection.
