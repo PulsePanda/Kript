@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/PulsePanda/Kript.svg?branch=master)](https://travis-ci.org/PulsePanda/Kript)
+
 # Kript
 A Java built RSA network encryption library.
 
