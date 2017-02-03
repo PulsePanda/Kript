@@ -10,7 +10,7 @@ import static org.junit.Assert.assertNotSame;
 public class KriptTest {
 
     @Test
-    public void mainTest() throws Exception {
+    public void encryptDecryptTest() throws Exception {
         Kript k = new Kript();
         k.setRemotePublicKey(k.getPublicKey()); // create a false client public key for testing
         String originalText = "Text to be encrypted!?/.,<>!@#$%^&*()_+-=1234567890";

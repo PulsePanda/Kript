@@ -46,7 +46,7 @@ public class Kript {
      *
      * @throws NoSuchAlgorithmException thrown if RSA is unable to be found.
      */
-    private void generateKeypair() throws NoSuchAlgorithmException {
+    public void generateKeypair() throws NoSuchAlgorithmException {
         final KeyPairGenerator keyGen = KeyPairGenerator.getInstance("RSA");
         keyGen.initialize(1024);
         final KeyPair key = keyGen.generateKeyPair();
