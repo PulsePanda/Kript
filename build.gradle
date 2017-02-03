@@ -1,11 +1,22 @@
 apply plugin: 'java'
 apply plugin: 'base'
+apply plugin: 'application'
+
+mainClassName = 'Kript.Kript'
 
 version = '1.2'
 
+repositories {
+    mavenCentral()
+}
+
 build.doLast {
-  copy {
-    from 'build/docs/javadoc'
-    into 'docs'
-  }
+    copy {
+        from 'build/docs/javadoc'
+        into 'docs'
+    }
+}
+
+dependencies {
+    testCompile 'junit:junit:4.10'
 }
