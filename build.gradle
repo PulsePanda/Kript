@@ -7,13 +7,20 @@ repositories {
     mavenCentral()
 }
 
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    classifier = 'javadoc'
+    from javadoc.destinationDir
+}
+
 build.doLast {
     copy {
         from 'build/docs/javadoc'
-        into 'docs'
+        into 'javadoc'
     }
 }
 
 dependencies {
     testCompile 'junit:junit:4.10'
 }
+
+build.dependsOn javadocJar
